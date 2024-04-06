@@ -1,21 +1,32 @@
 
 local sqlite = require("ljsqlite3")
+local utils = require("utils")
 
 local M = {}
 
 function M.create_todo()
+  local root_dir = utils.get_root_dir()
+  if root_dir == nil then
+    print("Root directory not found.")
+    return
+  end
   local todo_desc = ""
   repeat
     todo_desc = vim.fn.input("Enter a description: ")
     print("")
   until (todo_desc ~= "") and (string.len(todo_desc) <= 150)
-  local db = sqlite.open("todo.db")
-  db:exec("INSER INTO todo_list (description) VALUES ('" .. todo_desc .. "');")
+  local db = sqlite.open(root_dir .. "todo.db")
+  db:exec("INSERT INTO todo_list (description) VALUES ('" .. todo_desc .. "');")
   db:close()
 end
 
 function M.complete_todo()
-  local db = sqlite.open("todo.db")
+  local root_dir = utils.get_root_dir()
+  if root_dir == nil then
+    print("Root directory not found.")
+    return
+  end
+  local db = sqlite.open(root_dir .. "todo.db")
   local todo_completed = -1
   local todo_selected = -1
   repeat
