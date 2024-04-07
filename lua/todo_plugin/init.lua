@@ -1,12 +1,9 @@
 
-local fetch = require("todo_plugin.fetch")
-local update = require("todo_plugin.update")
-
 local M = {}
 
-M.fetch_todos = fetch.fetch_todos
-M.create_todo = update.create_todo
-M.complete_todo = update.complete_todo
+M.fetch_todos = function ()
+  vim.api.nvim_command(':lua require("telescope.builtin").grep_string({search="TODO"})')
+end
 
 return M
 
