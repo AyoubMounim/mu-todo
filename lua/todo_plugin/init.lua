@@ -1,6 +1,8 @@
 
 local main_win, main_buf
 
+local TODOS = nil
+
 local function get_window_center(win)
   local height = vim.api.nvim_win_get_height(win)
   local width = vim.api.nvim_win_get_width(win)
@@ -14,15 +16,23 @@ local function get_centered_pos(child_win_width, child_win_height, parent_win)
   return x, y
 end
 
-local function open_vsplit()
-  print("closing")
-  vim.api.nvim_set_current_win(main_win)
-  vim.api.nvim_command("vsplit")
+local function on_enter()
+  if not TODOS then
+    print("No todos found\n")
+    return
+  end
+  local index = vim.api.nvim_win_get_cursor(0)[1]
+  local todo = TODOS[index]
+  if not todo then
+    print("Index out of bounds\n")
+    return
+  end
+  vim.api.nvim_win_close(0, true)
+  vim.api.nvim_command(":vne "..todo.file)
 end
 
 local function set_mappings()
-  vim.api.nvim_buf_set_keymap(0, 'n', '<cr>', ':lua require("todo_plugin").open_vsplit()<cr>', {})
-  vim.api.nvim_buf_set_keymap(0, 'n', '<cr>', ':lua print(vim.api.nvim_win_get_cursor(0)[1])<cr>', {})
+  vim.api.nvim_buf_set_keymap(0, 'n', '<cr>', ':lua require("todo_plugin").on_enter()<cr>', {})
 end
 
 
@@ -152,12 +162,12 @@ end
 
 ---@return nil
 M.todos = function ()
-  local todos = fetch_todos()
-  local buf, win = make_window(todos)
+  TODOS = fetch_todos()
+  local buf, win = make_window(TODOS)
   set_mappings()
 end
 
-M.open_vsplit = open_vsplit
+M.on_enter = on_enter
 
 return M
 
