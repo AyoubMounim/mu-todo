@@ -28,7 +28,8 @@ local function on_enter()
     return
   end
   vim.api.nvim_win_close(0, true)
-  vim.api.nvim_command(":vne "..todo.file)
+  local command = ":vne +"..todo.row.." "..todo.file
+  vim.api.nvim_command(command)
 end
 
 local function set_mappings()
