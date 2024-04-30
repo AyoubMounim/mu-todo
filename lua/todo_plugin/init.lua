@@ -136,7 +136,7 @@ local function make_window(todos)
       height=win_height,
       style='minimal',
       border='single',
-      title='Hello There!',
+      title='TODOs',
       title_pos='center'
     }
   )
